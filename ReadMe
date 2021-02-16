@@ -7,9 +7,6 @@ This script adds:
     makes additional digital inputs available
     makes all digital inputs behave the same: pull up so they are active low
 
-This script should be run manually initally.
-It will then called from reinstallMods to reinstall functionality after a Venus update
-
 The Raspberry PI default is for the first 8 GPIO pins to have pull UPs
 and the remaining have pull DOWNs. This makes some digital input pins behave differently
 This script installs a DT overlay that switches to pull UPs for all digital input pins
@@ -26,6 +23,9 @@ code that access relays - a significant effort
 Changes to add more relay functionality is NOT part of this package!
 but some code is in place but commented out
 look in relaystate.py, gpio_list and later in this script
+
+This script should be run manually initally.
+It will then called from reinstallMods to reinstall functionality after a Venus update
 
 Setup:
 
