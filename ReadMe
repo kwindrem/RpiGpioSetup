@@ -1,0 +1,46 @@
+This package adds additional digital inputs and relay outputs
+
+The stock RPI Venus distribution includes two relays and two digital inputs
+
+This script adds:
+    the additional GPIO pins (5 total) to /etc/venus/gpio_list
+    makes additional digital inputs available
+    makes all digital inputs behave the same: pull up so they are active low
+
+This script should be run manually initally.
+It will then called from reinstallMods to reinstall functionality after a Venus update
+
+The Raspberry PI default is for the first 8 GPIO pins to have pull UPs
+and the remaining have pull DOWNs. This makes some digital input pins behave differently
+This script installs a DT overlay that switches to pull UPs for all digital input pins
+
+Only the first relay can be assigned to a function: alarm, genertor start/stop or pump.
+Others are only provided manual on/off control from the menu.
+
+Adding additional relays to gpio_list causes systemcalc to crash
+/opt/victronenergy/dbus-systemcalc-py/delegates/relaystate.py can be modified to prevent the crash
+however the GUI needs to be modified to bring these relays to the user for on/off manual control
+
+The ability to assign functions to other than the first relay requires significant rework to all
+code that access relays - a significant effort
+Changes to add more relay functionality is NOT part of this package!
+but some code is in place but commented out
+look in relaystate.py, gpio_list and later in this script
+
+Setup:
+
+Copy the entire repo from GitHub as a zip file to /data on the Venus device
+then unzip it. This should populate /data/VeCanSetup with the package contents.
+
+You must also install SetupHelper from here:
+
+https://github.com/kwindrem/Victron-VeusOs-Setup-Helper
+
+Once both packages are installed run setup and follow the prompts.
+./setup
+
+You will need root access to the Venus device. Instructions can be found here:
+https://www.victronenergy.com/live/ccgx:root_access
+The root password needs to be reentered following a Venus update.
+Setting up an authorization key (see documentation referenced above) will save time and avoid having to reset the root password after each update.
+

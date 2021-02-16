@@ -1,0 +1,104 @@
+#!/bin/bash
+
+# adds additional digital inputs and relay outputs
+
+# the stock RPI Venus distribution includes two relays and two digital inputs
+# adding the additional GPIO pins to /etc/venus/gpio_list
+# makes additional digital inputs available
+# all 5 defined digital inputs are activated by this script
+#
+# the Raspberry PI default is for the first 8 GPIO pins to have pull UPs
+# and the remaining have pull DOWNs. This makes some digital input pins behave differently
+# this script also installs a DT overlay that switches to pull UPs for all digital input pins
+#
+# Only the first relay can be assigned to a function: alarm, genertor start/stop or pump.
+# Others are only provided manual on/off control from the menu.
+# Two relays are supported. Adding additional relays to gpio_list causes systemcalc to crash
+# /opt/victronenergy/dbus-systemcalc-py/delegates/relaystate.py can be modified to prevent the crash
+# however the GUI needs to be modified to bring these relays to the user for on/off manual control
+# The ability to assign functions to other than the first relay requires significant rework to all
+# code that access relays - a significant effort
+# Changes to support more than two relays and more than one assignalble relay is NOT part of this update
+# but code is in place but commented out
+# look in relaystate.py, gpio_list and later in this script
+
+# run manually initally, then called from reinstallMods
+# to uninstall/deactivate, call this script with "uninstall" as first parameter
+
+# Note, this script DOES require a system reboot.
+
+gpioListFile="/etc/venus/gpio_list"
+overlayFile="/u-boot/overlays/VenusGpioOverlay.dtb"
+relayStateFile="/opt/victronenergy/dbus-systemcalc-py/delegates/relaystate.py"
+
+# no log file for this package
+packageLogFile=""
+
+#### following lines incorporate SetupHelper utilities into this script
+# Refer to the SetupHelper ReadMe file for details.
+    
+source "/data/SetupHelper/CommonResources"
+
+if [ $scriptAction == 'EXIT' ] ; then
+    exit
+fi
+
+checkFileSets
+
+#### end of lines to include SetupHelper
+
+#### running manually and OK to proceed - prompt for input
+if [ $scriptAction == 'NONE' ] ; then
+    # display innitial message
+    echo
+    echo "This package makes the following modifications:"
+    echo "  Activates all 5 predefined digital inputs"
+    echo "  Changes all digital inputs to have pull-ups in stead of a mix of pull up/down"
+
+    standardActionPrompt
+fi
+
+#### installing
+if [ $scriptAction == 'INSTALL' ] ; then
+    updateActiveFile "$gpioListFile"
+    
+    # install DT overlay to for pull-ups on all digital inputs
+        updateActiveFile $fileSets/VenusGpioOverlay.dtb "$overlayFile"
+
+    if [ $(grep -c "VenusGpioOverlay" "$configFile") == 0 ]; then
+        logMessage "activating GPIO DT overlay"
+        echo "#### change all digital inputs to pull ups" >> "$configFile"
+        echo "dtoverlay=VenusGpioOverlay" >> "$configFile"
+        echo "#### end change all digital inputs to pull ups" >> "$configFile"
+        filesUpdated=true
+    fi
+
+    # modify relaystate.py for additional relays to prevent system calc crash
+    #### this modification is commented out because additional work is needed
+    #### to make these relays useful
+    #updateActiveFile "$relayStateFile"
+    #fi
+fi
+
+# uninstalling - check scriptAction again
+# if an install step failed package needs to be removed
+if [ $scriptAction == 'UNINSTALL' ] ; then
+    restoreActiveFile "$gpioListFile"
+    restoreActiveFile "$overlayFile"
+#    restoreActiveFile "$relayStateFile"
+#    fi
+
+    # remove mods from configFile - do not use restore in case other mods were made manually
+    if [ $(grep -c "#### change all digital inputs to pull ups" "$configFile") != 0 ]; then
+        sed -i -e '/#### change all digital inputs to pull ups/,/#### end change all digital inputs to pull ups/d' "$configFile"
+        filesUpdated=true
+    fi
+fi
+
+if $filesUpdated ; then
+    rebootNeeded=true
+fi
+
+# thats all folks - SCRIPT EXITS INSIDE THE FUNCTION
+endScript
+
