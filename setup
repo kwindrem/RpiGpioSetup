@@ -63,7 +63,7 @@ if [ $scriptAction == 'INSTALL' ] ; then
     updateActiveFile "$gpioListFile"
     
     # install DT overlay to for pull-ups on all digital inputs
-        updateActiveFile $fileSets/VenusGpioOverlay.dtb "$overlayFile"
+        updateActiveFile $pkgFileSets/VenusGpioOverlay.dtb "$overlayFile"
 
     if [ $(grep -c "VenusGpioOverlay" "$configFile") == 0 ]; then
         logMessage "activating GPIO DT overlay"
