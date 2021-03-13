@@ -13,11 +13,11 @@
 17  out relay_2
 
 #### Relay 3 - 6 do NOT work on PI 4 and makes systemcalc crash!
-#### must modify relaystate.py before activating these pins
-#### also, PageSettingsRelay.qml needs to be updated for the additional relays
-#### in order to control them manually from the GUI
+####    This package includes mods to relaystate.py
+#### However, PageSettingsRelay.qml needs to be updated for the additional relays
+####    in order to control them manually from the GUI
 #### many other modifications are needed to hook up other functions to anything but Relay 1
-#### NONE of these modifications are made by the package so Relay 3-6 are not activated here
+#### These modifications are NOT included in this package
 
 # Relay 3 Pin 13 / GPIO 27
 #27  out relay_3
