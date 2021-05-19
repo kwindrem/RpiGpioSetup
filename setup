@@ -39,12 +39,6 @@ packageLogFile=""
     
 source "/data/SetupHelper/CommonResources"
 
-if [ $scriptAction == 'EXIT' ] ; then
-    exit
-fi
-
-checkFileSets
-
 #### end of lines to include SetupHelper
 
 #### running manually and OK to proceed - prompt for input
