@@ -30,6 +30,7 @@
 gpioListFile="/etc/venus/gpio_list"
 overlayFile="/u-boot/overlays/VenusGpioOverlay.dtb"
 relayStateFile="/opt/victronenergy/dbus-systemcalc-py/delegates/relaystate.py"
+configFile="/u-boot/config.txt"
 
 # no log file for this package
 packageLogFile=""
@@ -40,6 +41,28 @@ packageLogFile=""
 source "/data/SetupHelper/CommonResources"
 
 #### end of lines to include SetupHelper
+
+# prevent installing if not a Raspberry Pi
+if [ -f /etc/venus/machine ]; then
+    machine=$(cat /etc/venus/machine)
+fi
+if [ -z $machine ]; then
+    if [ -f "$installedFlag" ]; then
+        logMessage "can't determine Venus device type - uninstalling"
+        scriptAction='UNINSTALL'
+    else
+        logMessage "can't determine Venus device type - exiting"
+        exit
+    fi
+elif [ $machine != "raspberrypi2" ] && [ $machine != "raspberrypi4" ]; then
+    if [ -f "$installedFlag" ]; then
+        logMessage "$packageName not compatible with $machine - uninstalling"
+        scriptAction='UNINSTALL'
+    else
+        logMessage "$packageName not compatible with $machine - exiting"
+        exit
+    fi
+fi
 
 #### running manually and OK to proceed - prompt for input
 if [ $scriptAction == 'NONE' ] ; then
@@ -83,9 +106,11 @@ if [ $scriptAction == 'UNINSTALL' ] ; then
 #    fi
 
     # remove mods from configFile - do not use restore in case other mods were made manually
-    if [ $(grep -c "#### change all digital inputs to pull ups" "$configFile") != 0 ]; then
-        sed -i -e '/#### change all digital inputs to pull ups/,/#### end change all digital inputs to pull ups/d' "$configFile"
-        filesUpdated=true
+    if [ -f "$configFile" ]; then
+        if [ $(grep -c "#### change all digital inputs to pull ups" "$configFile") != 0 ]; then
+            sed -i -e '/#### change all digital inputs to pull ups/,/#### end change all digital inputs to pull ups/d' "$configFile"
+            filesUpdated=true
+        fi
     fi
 fi
 
