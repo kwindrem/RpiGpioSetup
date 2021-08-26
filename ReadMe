@@ -36,12 +36,12 @@ There are two other methods to fetch a package archive.
 
 IF the Venus device has internet access is to run the following command:
 
-wget -qO - https://github.com/kwindrem/RpiGoipSetup/archive/current.tar.gz | tar -xzf - -C /data
+wget -qO - https://github.com/kwindrem/RpiGpioSetup/archive/current.tar.gz | tar -xzf - -C /data
 
 If the Venus device does not have internet access, you will need to fetch the archive using a computer that does have internet access:
 
 click on this link in a web browser:
-https://github.com/kwindrem/RpiGoipSetup/archive/current.tar.gz
+https://github.com/kwindrem/RpiGpioSetup/archive/current.tar.gz
 
 rename the resulting .tar.gz file to venus-data.tar.gz
 copy the venus-data.tar.gz to a USB stick,
