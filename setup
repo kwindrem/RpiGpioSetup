@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# adds additional digital inputs and relay outputs
+# adds additional digital inputs and relay outputs to the Raspberry Pi platforms
 
 # the stock RPI Venus distribution includes two relays and two digital inputs
 # adding the additional GPIO pins to /etc/venus/gpio_list
@@ -13,14 +13,8 @@
 #
 # Only the first relay can be assigned to a function: alarm, genertor start/stop or pump.
 # Others are only provided manual on/off control from the menu.
-# Two relays are supported. Adding additional relays to gpio_list causes systemcalc to crash
-# /opt/victronenergy/dbus-systemcalc-py/delegates/relaystate.py can be modified to prevent the crash
-# however the GUI needs to be modified to bring these relays to the user for on/off manual control
-# The ability to assign functions to other than the first relay requires significant rework to all
-# code that access relays
-# Changes to support more than two relays and more than one assignalble relay is NOT part of this update
-# but code is in place but commented out
-# look in relaystate.py, gpio_list and later in this script
+# Six relays are supported. Only the first relay can be assigned to functions
+# The remaining relays are manual on/off only.
 
 # run manually initally, then called from reinstallMods
 # to uninstall/deactivate, call this script with "uninstall" as first parameter
@@ -77,10 +71,14 @@ fi
 
 #### installing
 if [ $scriptAction == 'INSTALL' ] ; then
+
     updateActiveFile "$gpioListFile"
+
+    # modify relaystate.py for additional relays to prevent system calc crash
+    updateActiveFile "$relayStateFile"
     
     # install DT overlay to for pull-ups on all digital inputs
-        updateActiveFile $pkgFileSets/VenusGpioOverlay.dtb "$overlayFile"
+    updateActiveFile $pkgFileSets/VenusGpioOverlay.dtb "$overlayFile"
 
     if [ $(grep -c "VenusGpioOverlay" "$configFile") == 0 ]; then
         logMessage "activating GPIO DT overlay"
@@ -89,12 +87,6 @@ if [ $scriptAction == 'INSTALL' ] ; then
         echo "#### end change all digital inputs to pull ups" >> "$configFile"
         filesUpdated=true
     fi
-
-    # modify relaystate.py for additional relays to prevent system calc crash
-    #### this modification is commented out because additional work is needed
-    #### to make these relays useful
-    #updateActiveFile "$relayStateFile"
-    #fi
 fi
 
 # uninstalling - check scriptAction again
@@ -102,8 +94,7 @@ fi
 if [ $scriptAction == 'UNINSTALL' ] ; then
     restoreActiveFile "$gpioListFile"
     restoreActiveFile "$overlayFile"
-#    restoreActiveFile "$relayStateFile"
-#    fi
+    restoreActiveFile "$relayStateFile"
 
     # remove mods from configFile - do not use restore in case other mods were made manually
     if [ -f "$configFile" ]; then

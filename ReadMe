@@ -11,18 +11,12 @@ The Raspberry PI default is for the first 8 GPIO pins to have pull UPs
 and the remaining have pull DOWNs. This makes some digital input pins behave differently
 This script installs a DT overlay that switches to pull UPs for all digital input pins
 
+This package adds 4 more relays.
+
 Only the first relay can be assigned to a function: alarm, genertor start/stop or pump.
 Others are only provided manual on/off control from the menu.
 
-Adding additional relays to gpio_list causes systemcalc to crash
-/opt/victronenergy/dbus-systemcalc-py/delegates/relaystate.py can be modified to prevent the crash
-however the GUI needs to be modified to bring these relays to the user for on/off manual control
-
-The ability to assign functions to other than the first relay requires significant rework to all
-code that access relays - a significant effort
-Changes to add more relay functionality is NOT part of this package!
-but some code is in place but commented out
-look in relaystate.py, gpio_list and later in this script
+The remaining 5 relays are manual on/off only.
 
 This script should be run manually initally.
 It will then called from reinstallMods to reinstall functionality after a Venus update
@@ -46,16 +40,16 @@ https://github.com/kwindrem/RpiGpioSetup/archive/current.tar.gz
 rename the resulting .tar.gz file to venus-data.tar.gz
 copy the venus-data.tar.gz to a USB stick,
 put the stick in the Venus device and reboot.
-When Venus boots, it will unarchive the file to /data/RpiGpioSetup-current
+When Venus boots, it will unarchive the file to /data/RpiGoipSetup-current
 
 Move the directory into it's active locaiton:
-rm -rf /data/RpiGpioSetup
-mv /data/RpiGpioSetup-current /data/RpiGpioSetup
+rm -rf /data/RpiGoipSetup
+mv /data/RpiGoipSetup-current /data/RpiGoipSetup
 
 Repeat the above for SetupHelper if you haven't done so for another package.
 
 Finally, run the setup script to complete the installation
-/data/RpiGpioSetup/setup
+/data/RpiGoipSetup/setup
 
 You will need root access to the Venus device. Instructions can be found here:
 https://www.victronenergy.com/live/ccgx:root_access

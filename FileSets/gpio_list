@@ -1,4 +1,4 @@
-#### modified for use by the RpiGpio package
+#### modified for use by the RpiGpio package on Raspberry PI platforms ONLY
 
 # This is a list of gpio pins, set by the script /etc/rcS.d/S90gpio_pins.sh
 # They are documented at: https://github.com/victronenergy/venus/wiki/bbb-gpio
@@ -12,21 +12,14 @@
 # Relay 2 Pin 11 / GPIO 17
 17  out relay_2
 
-#### Relay 3 - 6 do NOT work on PI 4 and makes systemcalc crash!
-####    This package includes mods to relaystate.py
-#### However, PageSettingsRelay.qml needs to be updated for the additional relays
-####    in order to control them manually from the GUI
-#### many other modifications are needed to hook up other functions to anything but Relay 1
-#### These modifications are NOT included in this package
-
 # Relay 3 Pin 13 / GPIO 27
-#27  out relay_3
+27  out relay_3
 # Relay 4 Pin 15 / GPIO 22
-#22  out relay_4
+22  out relay_4
 # Relay 5 Pin 16 / GPIO 23
-#23  out relay_5
+23  out relay_5
 # Relay 6 Pin 18 / GPIO 24
-#24  out relay_6
+24  out relay_6
 
 # these have pull UPs
 # Digital input 1   Pin 29 / GPIO 05
