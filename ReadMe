@@ -6,6 +6,10 @@ This script adds:
     the additional GPIO pins (5 total) to /etc/venus/gpio_list
     makes additional digital inputs available
     makes all digital inputs behave the same: pull up so they are active low
+    shutdown command to Device List / Settings / General
+
+To use the shutdown command, pins 38 and 36 of the RPI's GPIO header must be connected
+    If you don't want the shutdown command to function, do not jumper these pins
 
 The Raspberry PI default is for the first 8 GPIO pins to have pull UPs
 and the remaining have pull DOWNs. This makes some digital input pins behave differently
@@ -40,16 +44,16 @@ https://github.com/kwindrem/RpiGpioSetup/archive/current.tar.gz
 rename the resulting .tar.gz file to venus-data.tar.gz
 copy the venus-data.tar.gz to a USB stick,
 put the stick in the Venus device and reboot.
-When Venus boots, it will unarchive the file to /data/RpiGoipSetup-current
+When Venus boots, it will unarchive the file to /data/RpiGpioSetup-current
 
 Move the directory into it's active locaiton:
-rm -rf /data/RpiGoipSetup
-mv /data/RpiGoipSetup-current /data/RpiGoipSetup
+rm -rf /data/RpiGpioSetup
+mv /data/RpiGpioSetup-current /data/RpiGpioSetup
 
 Repeat the above for SetupHelper if you haven't done so for another package.
 
 Finally, run the setup script to complete the installation
-/data/RpiGoipSetup/setup
+/data/RpiGpioSetup/setup
 
 You will need root access to the Venus device. Instructions can be found here:
 https://www.victronenergy.com/live/ccgx:root_access
