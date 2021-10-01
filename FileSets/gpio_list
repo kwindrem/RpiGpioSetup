@@ -38,11 +38,3 @@
 # Digital input 5   Pin 37 / GPIO 26
 26  in digital_input_5
 
-
-#### Gracefull shutdown - connect pin 36 to pin 38
-#### Note these inputs and outputs is NOT added to the available I/O used by Venus OS !!!!
-# Pin 36 / GPIO 16
-16  in digital_input_6
-# Relay 7 Pin 38 / GPIO 20
-20  out relay_7
-

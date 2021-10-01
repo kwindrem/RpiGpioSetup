@@ -19,15 +19,12 @@
 # run manually initally, then called from reinstallMods
 # to uninstall/deactivate, call this script with "uninstall" as first parameter
 
-# a shutdown command is added to the Settings / General
-# the shutdown uses a psudo-digital input jumpered to a psudo-relay output
 # Note, this script DOES require a system reboot.
 
 gpioListFile="/etc/venus/gpio_list"
 overlayFile="/u-boot/overlays/VenusGpioOverlay.dtb"
 relayStateFile="/opt/victronenergy/dbus-systemcalc-py/delegates/relaystate.py"
 configFile="/u-boot/config.txt"
-pageGeneralFile="/opt/victronenergy/gui/qml/PageSettingsGeneral.qml"
 
 # no log file for this package
 packageLogFile=""
@@ -69,22 +66,7 @@ if [ $scriptAction == 'NONE' ] ; then
     echo "  Activates all 5 predefined digital inputs"
     echo "  Changes all digital inputs to have pull-ups in stead of a mix of pull up/down"
 
-    standardActionPrompt 'MORE_PROMPTS'
-
-    #  installing (not reinstalling) - prompt for options
-    if [ $scriptAction == 'NONE' ]; then
-        echo
-        echo "An optional shutdown command is added to Settings / General:"
-        echo " to use this command, RPI GPIO pings 38 and 36 must be connected together"
-        echo
-        read -p "Do you wish to install ths shugdown command? (y/n)? "
-        if $yesResponse ; then
-            touch "$setupOptionsDir/shutdownCommand"
-        else
-            rm -f "$setupOptionsDir/shutdownCommand"
-        fi
-        scriptAction='INSTALL'
-    fi
+    standardActionPrompt
 fi
 
 #### installing
@@ -105,15 +87,6 @@ if [ $scriptAction == 'INSTALL' ] ; then
         echo "#### end change all digital inputs to pull ups" >> "$configFile"
         filesUpdated=true
     fi
-
-
-    if [ -f $setupOptionsDir/shutdownCommand ]; then
-        updateActiveFile "$pageGeneralFile"
-        installService $packageName
-    else
-        restoreActiveFile "$pageGeneralFile"
-        removeService $packageName
-    fi
 fi
 
 # uninstalling - check scriptAction again
@@ -122,8 +95,6 @@ if [ $scriptAction == 'UNINSTALL' ] ; then
     restoreActiveFile "$gpioListFile"
     restoreActiveFile "$overlayFile"
     restoreActiveFile "$relayStateFile"
-    restoreActiveFile "$pageGeneralFile"
-    removeService $packageName
 
     # remove mods from configFile - do not use restore in case other mods were made manually
     if [ -f "$configFile" ]; then
