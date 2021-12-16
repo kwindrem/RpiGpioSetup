@@ -36,6 +36,7 @@ source "/data/SetupHelper/CommonResources"
 
 #### end of lines to include SetupHelper
 
+####### this is duplicate to code in CommonResources -- keep in case SetupHelepr has not been updated
 # prevent installing if not a Raspberry Pi
 if [ -f /etc/venus/machine ]; then
     machine=$(cat /etc/venus/machine)
@@ -46,7 +47,7 @@ if [ -z $machine ]; then
         scriptAction='UNINSTALL'
     else
         logMessage "can't determine Venus device type - exiting"
-        exit
+		exit $INCOMPATIBLE_PLATFORM
     fi
 elif [ $machine != "raspberrypi2" ] && [ $machine != "raspberrypi4" ]; then
     if [ -f "$installedFlag" ]; then
@@ -54,7 +55,7 @@ elif [ $machine != "raspberrypi2" ] && [ $machine != "raspberrypi4" ]; then
         scriptAction='UNINSTALL'
     else
         logMessage "$packageName not compatible with $machine - exiting"
-        exit
+		exit $INCOMPATIBLE_PLATFORM
     fi
 fi
 

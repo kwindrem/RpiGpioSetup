@@ -17,7 +17,7 @@
             pinctrl-0 = <&my_pins>;
 
             my_pins: my_pins {
-                brcm,pins = <5 6 13 19 26>;     /* gpio no. */
+                brcm,pins = <5 6 13 16 19 26>;     /* gpio no. */
                 brcm,function = <0>; /* 0:in, 1:out */
                 brcm,pull = <2>;     /* 2:up 1:down 0:none */
             };

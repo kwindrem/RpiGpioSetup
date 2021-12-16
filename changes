@@ -1,0 +1,6 @@
+v3.4
+	added raspberryPiOnly flag file
+	add graceful shutdown GPIO pin - used by ShutdownMonitor v2.0 or later
+	add exit codes
+	this supports SetupHelper v4
+	removed manual download/install instructions from the ReadMe
