@@ -6,6 +6,8 @@ This script adds:
     the additional GPIO pins (5 total) to /etc/venus/gpio_list
     makes additional digital inputs available
     makes all digital inputs behave the same: pull up so they are active low
+    activates GPIO $16 (header pin 36) as a shutdown pin
+		This requires ShutdownMonitor v2.0 or later
 
 The Raspberry PI default is for the first 8 GPIO pins to have pull UPs
 and the remaining have pull DOWNs. This makes some digital input pins behave differently

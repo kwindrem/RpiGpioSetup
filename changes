@@ -1,4 +1,8 @@
-v3.4
+v3.5:
+	added comment in the ReadMe about the GPIO pion for shutdown
+	no functional changes
+
+v3.4:
 	added raspberryPiOnly flag file
 	add graceful shutdown GPIO pin - used by ShutdownMonitor v2.0 or later
 	add exit codes
