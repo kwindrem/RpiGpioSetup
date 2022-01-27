@@ -23,6 +23,12 @@ The remaining 5 relays are manual on/off only.
 This script should be run manually initally.
 It will then called from reinstallMods to reinstall functionality after a Venus update
 
+Custom GPIO list:
+
+If /data/setupOptions/RpiGpioSetup/gpio_list exists it is used in place
+	of the one in the package directory.
+	This accommodates Relay HATs, etc. that use different GPIO pins.
+
 Setup:
 
 The easiest way to install this or other of my packages is to first install SetupHelper

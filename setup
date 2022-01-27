@@ -73,7 +73,12 @@ fi
 #### installing
 if [ $scriptAction == 'INSTALL' ] ; then
 
-    updateActiveFile "$gpioListFile"
+	# use a custom gpio list if present
+	if [ -f "$setupOptionsDir/gpio_list" ]; then
+		updateActiveFile "$setupOptionsDir/gpio_list" "$gpioListFile"
+	else
+		updateActiveFile "$gpioListFile"
+	fi
 
     # modify relaystate.py for additional relays to prevent system calc crash
     updateActiveFile "$relayStateFile"
