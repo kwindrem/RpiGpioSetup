@@ -1,15 +1,11 @@
 
 compile:
-  dtc -@ -I dts -O dtb -o VenusGpioOverlay.dtb VenusGpioOverlay.dts
------------ or ??? -----------
   dtc -@ -I dts -O dtb -o VenusGpioOverlay.dtbo VenusGpioOverlay.dts
 
-Put it in /boot/overlays:
-    sudo cp VenusGpioOverlay.dtb /boot/overlays/VenusGpioOverlay.dtb
------------ or ??? -----------
-    sudo cp VenusGpioOverlay.dtbo /boot/overlays/VenusGpioOverlay.dtbo
+Put it in /u-boot/overlays:
+    sudo cp VenusGpioOverlay.dtbo /u-boot/overlays/VenusGpioOverlay.dtbo
 
-Add a line to /boot/config.txt:
+Add a line to /u-boot/config.txt:
     dtoverlay=VenusGpioOverlay
 
-Note /boot might be /u-boot
+Note /u-boot typically appears as /boot when the SD card is mounted on a computer

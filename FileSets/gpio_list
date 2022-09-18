@@ -1,45 +1,51 @@
-#### modified for use by the RpiGpio package on Raspberry PI platforms ONLY
+#### LEGACY assignments for Relay 1, 5 and 6 and Dig In 4
+#### WILL CONFLICT with second channel on WaveShare dual channel CANbus hats, and possiblly others
+####	interrupts, chip selects and second SPI bus
+#### single channel CANbus hats should be OK with these assignments
+####	this includes using only the first channel of the WaveShare dual channel hats
+#### note that WaveShare sells two different dual channel CANbus hats: the non FD and FD (flexible data rate)
 
-# This is a list of gpio pins, set by the script /etc/rcS.d/S90gpio_pins.sh
+### for use by the RpiGpio package on Raspberry PI platforms ONLY
+
+# This is a list of GPIO pins, set by the script /etc/rcS.d/S90gpio_pins.sh
 # They are documented at: https://github.com/victronenergy/venus/wiki/bbb-gpio
 # Format: <pin_number> <direction: in/out> <name>
 #
 # The <name> part is used to create an symlink in /dev/gpio.
 
 # relays are active HIGH
-# Relay 1   Pin 40 / GPIO 21
+# Relay 1   GPIO 21 / header pin 40
 21  out relay_1
-# Relay 2 Pin 11 / GPIO 17
+# Relay 2   GPIO 17 / header pin 11
 17  out relay_2
 
-# Relay 3 Pin 13 / GPIO 27
+# Relay 3   GPIO 27 / header pin 13
 27  out relay_3
-# Relay 4 Pin 15 / GPIO 22
+# Relay 4   GPIO 22 / header pin 15
 22  out relay_4
-# Relay 5 Pin 16 / GPIO 23
+# Relay 5   GPIO 23 / header pin 16
 23  out relay_5
-# Relay 6 Pin 18 / GPIO 24
+# Relay 6   GPIO 24 / header pin 18
 24  out relay_6
 
 # these have pull UPs
-# Digital input 1   Pin 29 / GPIO 05
+# Digital input 1   GPIO 5 / header pin 29
 5   in digital_input_1
-# Digital input 2   Pin 31 / GPIO 06
+# Digital input 2   PIO 6 / header pin 31
 6   in digital_input_2
-
 
 # in stock code these have pull DOWNs
 #### modified to pull UPs by the GPIO overlay that is installed as part of this package
 
-# Digital input 3   Pin 33 / GPIO 13
+# Digital input 3   GPIO 13 / header pin 33
 13  in digital_input_3
-# Digital input 4   Pin 35 / GPIO 19
+# Digital input 4   GPIO 19 / header pin 35
 19  in digital_input_4
-# Digital input 5   Pin 37 / GPIO 26
+# Digital input 5   GPIO 26 / header pin 37
 26  in digital_input_5
 
 #### Gracefull shutdown input
 #### Note this input is NOT added to the available I/O used by Venus OS !!!!
-# Pin 36 / GPIO 16
+# GPIO 16 / header pin 36
 16  in digital_input_6
 

@@ -1,0 +1,59 @@
+#### ALTERNATE assignments for Relay 1, 5 and 6 and Dig In 4
+#### avoids conflict with second CANbus hat interface
+####	supports Waveshare dual CAN and dual CAN FD
+####		should work with CAN FD mode A or mode B
+####		 but not more than 1 CAN FD hat board
+####	NO i2c bus is possible since relay 1 and dig in 4 use these pins !!!!
+####	must use spi1-1cs.dtbo overlay, NOT spi1-3cs.dtbo because of conflicts
+####		digital input 3 conflicts with spi0-1 interrupt on CAN FD hat
+####		Shutdown monitor shutdown GPIO spi1-2 chip select on CAN FD hat
+####		relay 2 conflicts wih spi1-1 chip select on CAN FD hat
+####		relay 4 conflicts wih spi1-2 interrupt on CAN FD hat
+#
+#### other conflicts must be resolved manually by carefully selecting hat boards
+####	and creating a custom gpio_list file
+
+#### for use by the RpiGpio package on Raspberry PI platforms ONLY
+
+# This is a list of GPIO pins, set by the script /etc/rcS.d/S90gpio_pins.sh
+# They are documented at: https://github.com/victronenergy/venus/wiki/bbb-gpio
+# Format: <pin_number> <direction: in/out> <name>
+#
+# The <name> part is used to create an symlink in /dev/gpio.
+
+# relays are active HIGH
+# Relay 1   GPIO 2 / header pin 3 ALTERNATE assignment
+2  out relay_1
+# Relay 2   GPIO 17 / header pin 11
+17  out relay_2
+
+# Relay 3   GPIO 27 / header pin 13
+27  out relay_3
+# Relay 4   GPIO 22 / header pin 15
+22  out relay_4
+# Relay 5   GPIO 12 / header pin 32 ALTERNATE assignment
+12  out relay_5
+# Relay 6   GPIO 4 / header pin 7 ALTERNATE assignment
+4  out relay_6
+
+# these have pull UPs
+# Digital input 1   GPIO 5 / header pin 29
+5   in digital_input_1
+# Digital input 2   GPIO 6 / header pin 31
+6   in digital_input_2
+
+# in stock code these have pull DOWNs
+#### modified to pull UPs by the GPIO overlay that is installed as part of this package
+
+# Digital input 3   GPIO 13 / header pin 33
+13  in digital_input_3
+# Digital input 4   GPIO 3 / header pin 5 ALTERNATE assignment
+3  in digital_input_4
+# Digital input 5   GPIO 26 / header pin 37
+26  in digital_input_5
+
+#### Gracefull shutdown input
+#### Note this input is NOT added to the available I/O used by Venus OS !!!!
+# GPIO 16 / header pin 36
+16  in digital_input_6
+

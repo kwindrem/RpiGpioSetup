@@ -1,27 +1,56 @@
 This package adds additional digital inputs and relay outputs
+for Venus OS running on Raspberry PI platforms. 
+It is not suitable for other GX devices such as CCGX or Cerbo GX.
 
-The stock RPI Venus distribution includes two relays and two digital inputs
+The stock RPI Venus distribution there are NO relays or digital inputs defined.
 
 This script adds:
-    the additional GPIO pins (5 total) to /etc/venus/gpio_list
+    5 digital inputs
     makes additional digital inputs available
     makes all digital inputs behave the same: pull up so they are active low
-    activates GPIO $16 (header pin 36) as a shutdown pin
+    6 relay outputs
+    activates GPIO 16 (header pin 36) as a shutdown pin
 		This requires ShutdownMonitor v2.0 or later
 
 The Raspberry PI default is for the first 8 GPIO pins to have pull UPs
 and the remaining have pull DOWNs. This makes some digital input pins behave differently
 This script installs a DT overlay that switches to pull UPs for all digital input pins
 
-This package adds 4 more relays.
 
-Only the first relay can be assigned to a function: alarm, genertor start/stop or pump.
-Others are only provided manual on/off control from the menu.
+Only the relay 1 can be assigned to a function: alarm, genertor start/stop or pump.
+In addition, relay 2 can be assigned to temperature alarm
+The remaining 4 relays are only provided manual on/off control from the menu.
 
-The remaining 5 relays are manual on/off only.
+Note that the Raspberry PI has no relays or isolated/filtered digital inputs on board.
+
+Relay outputs are 0 volts when inactive and 3.3 volts when active.
+Current sink and source is limited. Check Raspberry PI specifications for details.
+You must attach the GPIO pins to external relays.
+Relays should active on a high (3.3 volt) input.
+Relays that activate on a low signal are NOT COMPATIBLE since
+the relays would still close during Raspberry PI boot regardless of the logic provided by Venus OS.
+
+Digital inputs expect 0 volts for an inactive input and 3.3 volts for an active input.
+You must provide isolation for the digital inputs to avoid damage to the CPU chip!!!
+
+Venus OS does not provide native support for i2c relay boards and this package does not add any.
 
 This script should be run manually initally.
 It will then called from reinstallMods to reinstall functionality after a Venus update
+
+
+GPIO conflicts:
+
+GPIO assignments for relays 5 and 6 may cause conflicts with hat board interrupts. 
+This conflict may cause the system to not boot properly or be extremely sluggish.
+This script allows for two assignments for relays 5 and 6.
+gpio_list is the legacy one: GPIO 23 and 24, respectively
+gpio_listForCanHats provides compatibility with at least the two Waveshare CANbus dual channel hats
+	GPIOs 12 and 20 are used for relays 5 and 6, respectively
+
+An option to select the legady or compatible set is offered during manual setup.
+However, this optoin is considered optional and installation with the legacy set
+is allowed even if the setup script is not run manually first.
 
 Custom GPIO list:
 

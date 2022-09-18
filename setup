@@ -19,10 +19,22 @@
 # run manually initally, then called from reinstallMods
 # to uninstall/deactivate, call this script with "uninstall" as first parameter
 
+# original assignments for relays 5 and 6 create conflicts with interrypt pins
+#	on hat boards such as the Waveshare dual CANbus hats (regular and FD versions)
+#	An option in this setup script allows selection of different GPIO assignments
+#	for relays 5 and 6 to avoid these conflicts
+#
+#	Because this conflict will be rare, the option is considered optional.
+#	That is, an automatic install WILL be permitted even if a manual install has not
+#		been perfomred.
+#
+#	VeCanSetup will alert the user of conflicts and prevent installing the second
+#		CANbus interface until this script is rerun to move the relay assignments.
+
 # Note, this script DOES require a system reboot.
 
 gpioListFile="/etc/venus/gpio_list"
-overlayFile="/u-boot/overlays/VenusGpioOverlay.dtb"
+overlayFile="/u-boot/overlays/VenusGpioOverlay.dtbo"
 relayStateFile="/opt/victronenergy/dbus-systemcalc-py/delegates/relaystate.py"
 configFile="/u-boot/config.txt"
 
@@ -64,19 +76,55 @@ if [ $scriptAction == 'NONE' ] ; then
     # display innitial message
     echo
     echo "This package makes the following modifications:"
-    echo "  Activates all 5 predefined digital inputs"
+    echo "  Activates 6 relay outputs"
+    echo "  Activates 5 digital inputs"
     echo "  Changes all digital inputs to have pull-ups in stead of a mix of pull up/down"
 
-    standardActionPrompt
-fi
+    standardActionPrompt 'MORE_PROMPTS'
 
+    if [ $scriptAction == 'NONE' ]; then
+		echo
+		echo "Legacy assignment for relays 5 and 6 may conflict with interrupts for some CANbus interface hat boards"
+		echo "Conflicts WILL render the Raspberry PI at least partially unresponsive"
+		echo "To avoid conflicts, an alternate set of GPIO assignments is available"
+
+		useCustomGpioFile=false
+		if [ -f "$setupOptionsDir/gpio_list" ]; then
+			yesNoPrompt "A custom gpio_list file exists - use it (y/n)?: "
+			if $yesResponse ; then
+				echo "CAUTION: manually check custom gpio_list for conflicts"
+				useCustomGpioFile=true
+			else
+				rm "$setupOptionsDir/gpio_list"
+			fi
+		fi
+		if ! $useCustomGpioFile ; then
+			echo
+			yesNoPrompt "Do you wish to install the alternate set of GPIO assignments (y/n)?: "
+			if $yesResponse ; then
+				touch "$setupOptionsDir/alternateGpio"
+			else
+				rm -f "$setupOptionsDir/alternateGpio"
+			fi
+		fi
+
+		scriptAction='INSTALL'
+	fi
+fi
 #### installing
 if [ $scriptAction == 'INSTALL' ] ; then
 
-	# use a custom gpio list if present
+	# use custom GPIO list if present
 	if [ -f "$setupOptionsDir/gpio_list" ]; then
+		logMessage "installing CUSTOM gpio_list"
 		updateActiveFile "$setupOptionsDir/gpio_list" "$gpioListFile"
+	# use a alternate gpio list if option is set
+	elif [ -f "$setupOptionsDir/alternateGpio" ]; then
+		logMessage "installing ALTERNATE gpio_list"
+		updateActiveFile "$setupOptionsDir/gpio_listForCanHats" "$gpioListFile"
+	# use a legacy gpio list otherwise
 	else
+		logMessage "installing LEGACY gpio_list"
 		updateActiveFile "$gpioListFile"
 	fi
 
@@ -84,7 +132,7 @@ if [ $scriptAction == 'INSTALL' ] ; then
     updateActiveFile "$relayStateFile"
     
     # install DT overlay to for pull-ups on all digital inputs
-    updateActiveFile $pkgFileSets/VenusGpioOverlay.dtb "$overlayFile"
+    updateActiveFile "$overlayFile"
 
     if [ $(grep -c "VenusGpioOverlay" "$configFile") == 0 ]; then
         logMessage "activating GPIO DT overlay"
