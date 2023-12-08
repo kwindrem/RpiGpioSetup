@@ -58,10 +58,14 @@ If /data/setupOptions/RpiGpioSetup/gpio_list exists it is used in place
 	of the one in the package directory.
 	This accommodates Relay HATs, etc. that use different GPIO pins.
 
-Setup:
+Installation:
 
-The easiest way to install this or other of my packages is to first install SetupHelper
-which you need to do anyway,
-then use its package install tool. Refer to the SetupHelper ReadMe for instructions.
+RpiGpioSetup requires that SetupHelper is installed first.
+
+The easiest way to install RpiGpioSetup is to do a "blind install" of SetupHelper
+	and then add the RpiGpioSetup package via the PackageManager menus.
+
+Refer to the SetupHelper ReadMe for instructions and for other install options:
+	https://github.com/kwindrem/SetupHelper
 
 

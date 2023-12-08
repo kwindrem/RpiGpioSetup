@@ -1,3 +1,6 @@
+v4.2:
+	fixed: selecting alternate GPIO set fails (setup script crashes)
+
 v4.1:
 	added support for v3.11
 

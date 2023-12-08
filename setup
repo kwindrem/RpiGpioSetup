@@ -121,8 +121,8 @@ if [ $scriptAction == 'INSTALL' ] ; then
 	# use a alternate gpio list if option is set
 	elif [ -f "$setupOptionsDir/alternateGpio" ]; then
 		logMessage "installing ALTERNATE gpio_list"
-		updateActiveFile "$setupOptionsDir/gpio_listForCanHats" "$gpioListFile"
-	# use a legacy gpio list otherwise
+		updateActiveFile "$pkgFileSets/gpio_listForCanHats" "$gpioListFile"
+	# otherwise use a legacy gpio list
 	else
 		logMessage "installing LEGACY gpio_list"
 		updateActiveFile "$gpioListFile"
