@@ -1,11 +1,17 @@
 
 compile:
   dtc -@ -I dts -O dtb -o VenusGpioOverlay.dtbo VenusGpioOverlay.dts
+  dtc -@ -I dts -O dtb -o VenusGpioOverlayForCanHats.dtbo VenusGpioOverlayForCanHats.dts
 
 Put it in /u-boot/overlays:
     sudo cp VenusGpioOverlay.dtbo /u-boot/overlays/VenusGpioOverlay.dtbo
 
 Add a line to /u-boot/config.txt:
     dtoverlay=VenusGpioOverlay
+
+The alternat overlay: VenusGpioOverlayForCanHats.dtbo is a companion for the alternate gpio_list. Install whichever is appropriate
+
+
+You will need to compile host that has dtc installed such as Raspberry PI OS. Most desktop computers do not have dtc and you probalby can't install it there. Venus OS also does NOT have dtc installed.
 
 Note /u-boot typically appears as /boot when the SD card is mounted on a computer

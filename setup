@@ -35,6 +35,7 @@
 
 gpioListFile="/etc/venus/gpio_list"
 overlayFile="/u-boot/overlays/VenusGpioOverlay.dtbo"
+altOverlayFile="/u-boot/overlays/VenusGpioOverlayForCanHats.dtbo"
 relayStateFile="/opt/victronenergy/dbus-systemcalc-py/delegates/relaystate.py"
 configFile="/u-boot/config.txt"
 
@@ -92,7 +93,7 @@ if [ $scriptAction == 'NONE' ] ; then
 		if [ -f "$setupOptionsDir/gpio_list" ]; then
 			yesNoPrompt "A custom gpio_list file exists - use it (y/n)?: "
 			if $yesResponse ; then
-				echo "CAUTION: manually check custom gpio_list for conflicts"
+				echo "CAUTION: manually check custom gpio_list and GPIO overlay for conflicts"
 				useCustomGpioFile=true
 			else
 				rm "$setupOptionsDir/gpio_list"
@@ -131,16 +132,29 @@ if [ $scriptAction == 'INSTALL' ] ; then
     # modify relaystate.py for additional relays to prevent system calc crash
     updateActiveFile "$relayStateFile"
     
-    # install DT overlay to for pull-ups on all digital inputs
-    updateActiveFile "$overlayFile"
-
-    if [ $(grep -c "VenusGpioOverlay" "$configFile") == 0 ]; then
-        logMessage "activating GPIO DT overlay"
-        echo "#### change all digital inputs to pull ups" >> "$configFile"
-        echo "dtoverlay=VenusGpioOverlay" >> "$configFile"
-        echo "#### end change all digital inputs to pull ups" >> "$configFile"
-        filesUpdated=true
-    fi
+	# install / update GPIO overlay
+	# there are two overlays, make sure the "other" one is removed from config.txt
+	if [ -f "$setupOptionsDir/alternateGpio" ]; then
+		updateActiveFile "$altOverlayFile"
+		gpioOverlay="VenusGpioOverlayForCanHats"
+		if [ $(grep -c "VenusGpioOverlay" "$configFile") == 0 ]; then
+            sed -i -e '/#### change all digital inputs to pull ups/,/#### end change all digital inputs to pull ups/d' "$configFile"
+		fi
+	else
+		updateActiveFile "$overlayFile"
+		gpioOverlay="VenusGpioOverlay"
+		if [ $(grep -c "VenusGpioOverlayForCanHats" "$configFile") > 0 ]; then
+            sed -i -e '/#### change all digital inputs to pull ups/,/#### end change all digital inputs to pull ups/d' "$configFile"
+		fi
+	fi
+	
+	if [ $(grep -c "#### change all digital inputs to pull ups" "$configFile") == 0 ]; then
+		logMessage "activating $gpioOverlay"
+		echo "#### change all digital inputs to pull ups" >> "$configFile"
+		echo "dtoverlay=$gpioOverlay" >> "$configFile"
+		echo "#### end change all digital inputs to pull ups" >> "$configFile"
+		filesUpdated=true
+	fi
 fi
 
 # uninstalling - check scriptAction again
@@ -148,6 +162,7 @@ fi
 if [ $scriptAction == 'UNINSTALL' ] ; then
     restoreActiveFile "$gpioListFile"
     restoreActiveFile "$overlayFile"
+    restoreActiveFile "$altOverlayFile"
     restoreActiveFile "$relayStateFile"
 
     # remove mods from configFile - do not use restore in case other mods were made manually

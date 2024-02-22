@@ -1,3 +1,6 @@
+v4.4:
+	added alternate GPIO overlay to remove conflicts with FD can hat
+
 v4.3:
 	fixed: no file sets error created in v4.2
 
