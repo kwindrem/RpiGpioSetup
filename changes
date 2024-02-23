@@ -1,3 +1,7 @@
+v4.5:
+	install spi1-1cs overlay for use in VeCanSetup for CANbus hats that use spi1
+		spi1-3cd conflicts with Shutdown pin
+
 v4.4:
 	added alternate GPIO overlay to remove conflicts with FD can hat
 

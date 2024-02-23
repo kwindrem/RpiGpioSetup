@@ -36,7 +36,6 @@
 gpioListFile="/etc/venus/gpio_list"
 overlayFile="/u-boot/overlays/VenusGpioOverlay.dtbo"
 altOverlayFile="/u-boot/overlays/VenusGpioOverlayForCanHats.dtbo"
-relayStateFile="/opt/victronenergy/dbus-systemcalc-py/delegates/relaystate.py"
 configFile="/u-boot/config.txt"
 
 # no log file for this package
@@ -129,9 +128,6 @@ if [ $scriptAction == 'INSTALL' ] ; then
 		updateActiveFile "$gpioListFile"
 	fi
 
-    # modify relaystate.py for additional relays to prevent system calc crash
-    updateActiveFile "$relayStateFile"
-    
 	# install / update GPIO overlay
 	# there are two overlays, make sure the "other" one is removed from config.txt
 	if [ -f "$setupOptionsDir/alternateGpio" ]; then
@@ -160,10 +156,6 @@ fi
 # uninstalling - check scriptAction again
 # if an install step failed package needs to be removed
 if [ $scriptAction == 'UNINSTALL' ] ; then
-    restoreActiveFile "$gpioListFile"
-    restoreActiveFile "$overlayFile"
-    restoreActiveFile "$altOverlayFile"
-    restoreActiveFile "$relayStateFile"
 
     # remove mods from configFile - do not use restore in case other mods were made manually
     if [ -f "$configFile" ]; then
@@ -179,5 +171,5 @@ if $filesUpdated ; then
 fi
 
 # thats all folks - SCRIPT EXITS INSIDE THE FUNCTION
-endScript
+endScript 'INSTALL_FILES'
 
