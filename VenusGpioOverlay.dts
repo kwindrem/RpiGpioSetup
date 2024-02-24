@@ -4,7 +4,7 @@
 / {
     compatible = "brcm,bcm2735,bcm2736,bcm2737,bcm2737A0,bcm2737B0,bcm2711";
 
-// make all Venus GX digital inputs have pull-ups
+// make all Venus GX digital outputs used for relays have pull-ups
 // the chip default is GPIO 1 - 8 have pull-ups, the rest are pull-downs
 
 // compile with
@@ -17,8 +17,8 @@
             pinctrl-0 = <&my_pins>;
 
             my_pins: my_pins {
-                brcm,pins = <5 6 13 16 19 26>;     /* gpio no. */
-                brcm,function = <0>; /* 0:in, 1:out */
+                brcm,pins = <17 21 22 23 24 27>;     /* gpio no. */
+                brcm,function = <1>; /* 0:in, 1:out */
                 brcm,pull = <2>;     /* 2:up 1:down 0:none */
             };
         };
