@@ -34,8 +34,6 @@
 # Note, this script DOES require a system reboot.
 
 gpioListFile="/etc/venus/gpio_list"
-overlayFile="/u-boot/overlays/VenusGpioOverlay.dtbo"
-altOverlayFile="/u-boot/overlays/VenusGpioOverlayForCanHats.dtbo"
 configFile="/u-boot/config.txt"
 
 # no log file for this package
@@ -131,13 +129,11 @@ if [ $scriptAction == 'INSTALL' ] ; then
 	# install / update GPIO overlay
 	# there are two overlays, make sure the "other" one is removed from config.txt
 	if [ -f "$setupOptionsDir/alternateGpio" ]; then
-		updateActiveFile "$altOverlayFile"
 		gpioOverlay="VenusGpioOverlayForCanHats"
 		if [ $(grep -c "VenusGpioOverlay" "$configFile") == 0 ]; then
             sed -i -e '/#### change all digital inputs to pull ups/,/#### end change all digital inputs to pull ups/d' "$configFile"
 		fi
 	else
-		updateActiveFile "$overlayFile"
 		gpioOverlay="VenusGpioOverlay"
 		if [ $(grep -c "VenusGpioOverlayForCanHats" "$configFile") > 0 ]; then
             sed -i -e '/#### change all digital inputs to pull ups/,/#### end change all digital inputs to pull ups/d' "$configFile"

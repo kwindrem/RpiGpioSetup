@@ -1,3 +1,8 @@
+v4.6:
+	fixed: v4.5 had corrupted file sets (v2.73 and maybe others)
+	cleanup overlay install
+	move to version-independent and patched replacements
+
 v4.5:
 	install spi1-1cs overlay for use in VeCanSetup for CANbus hats that use spi1
 		spi1-3cd conflicts with Shutdown pin

@@ -1,0 +1,20 @@
+--- /Users/Kevin/GitHub/RpiGpioSetup/FileSets/PatchSource/relaystate.py.source	2024-02-23 09:55:27
++++ /Users/Kevin/GitHub/RpiGpioSetup/FileSets/PatchSource/relaystate.py.edited	2024-02-23 22:32:14
+@@ -21,10 +21,16 @@
+ 			('com.victronenergy.settings', [
+ 				 '/Settings/Relay/Function'])] # Managed by the gui
+ 
++#### add relays 3 - 6 for RpiGpioSetup
+ 	def get_settings(self):
+ 		return [
+ 			('/Relay/0/State', '/Settings/Relay/0/InitialState', 0, 0, 1),
+-			('/Relay/1/State', '/Settings/Relay/1/InitialState', 0, 0, 1)
++			('/Relay/1/State', '/Settings/Relay/1/InitialState', 0, 0, 1),
++			('/Relay/2/State', '/Settings/Relay/2/InitialState', 0, 0, 1),
++			('/Relay/3/State', '/Settings/Relay/3/InitialState', 0, 0, 1),
++			('/Relay/4/State', '/Settings/Relay/4/InitialState', 0, 0, 1),
++			('/Relay/5/State', '/Settings/Relay/5/InitialState', 0, 0, 1),
++			('/Relay/6/State', '/Settings/Relay/6/InitialState', 0, 0, 1)
+ 		]
+ 
+ 	@property
