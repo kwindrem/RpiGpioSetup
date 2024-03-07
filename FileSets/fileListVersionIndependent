@@ -1,3 +1,2 @@
-/u-boot/overlays/spi1-1cs.dtbo
 /u-boot/overlays/VenusGpioOverlay.dtbo
 /u-boot/overlays/VenusGpioOverlayForCanHats.dtbo

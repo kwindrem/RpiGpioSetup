@@ -1,3 +1,6 @@
+v4.7:
+	removed spi1-1cs.dtbo - unused, and confilcts with VeCanSetup
+
 v4.6:
 	fixed: v4.5 had corrupted file sets (v2.73 and maybe others)
 	cleanup overlay install
