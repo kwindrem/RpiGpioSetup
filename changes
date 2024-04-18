@@ -1,3 +1,6 @@
+v4.9:
+	reverted to v7.17 HelperResources
+
 v4.8:
 	switched to using patch for some files
 	fixed typo in ReadMe
