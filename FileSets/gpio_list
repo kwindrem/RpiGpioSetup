@@ -31,7 +31,7 @@
 # these have pull UPs
 # Digital input 1   GPIO 5 / header pin 29
 5   in digital_input_1
-# Digital input 2   PIO 6 / header pin 31
+# Digital input 2   GPIO 6 / header pin 31
 6   in digital_input_2
 
 # in stock code these have pull DOWNs

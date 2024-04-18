@@ -1,5 +1,5 @@
---- /Users/Kevin/GitHub/RpiGpioSetup/FileSets/PatchSource/relaystate.py.source	2024-02-23 09:55:27
-+++ /Users/Kevin/GitHub/RpiGpioSetup/FileSets/PatchSource/relaystate.py.edited	2024-02-23 22:32:14
+--- /Users/Kevin/GitHub/RpiGpioSetup.copy/FileSets/PatchSource/relaystate.py-1.orig	2024-02-23 09:55:27
++++ /Users/Kevin/GitHub/RpiGpioSetup.copy/FileSets/PatchSource/relaystate.py-1	2024-02-23 22:32:14
 @@ -21,10 +21,16 @@
  			('com.victronenergy.settings', [
  				 '/Settings/Relay/Function'])] # Managed by the gui

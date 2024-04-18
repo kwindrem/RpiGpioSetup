@@ -17,7 +17,7 @@ and the remaining have pull DOWNs. This makes some digital input pins behave dif
 This script installs a DT overlay that switches to pull UPs for all digital input pins
 
 
-Only the relay 1 can be assigned to a function: alarm, genertor start/stop or pump.
+Only the relay 1 can be assigned to a function: alarm, generator start/stop or pump.
 In addition, relay 2 can be assigned to temperature alarm
 The remaining 4 relays are only provided manual on/off control from the menu.
 
@@ -35,22 +35,30 @@ You must provide isolation for the digital inputs to avoid damage to the CPU chi
 
 Venus OS does not provide native support for i2c relay boards and this package does not add any.
 
-This script should be run manually initally.
-It will then called from reinstallMods to reinstall functionality after a Venus update
+This script will accept default options when run from PackagManager. 
+
+
+This script will select default options when run from PackageManager.
+This may not be appropirate. See section below on GPIO conflicts:
+The script MUST be run from the command line to set options.
+After that, those options will be used when installing via PackageManager,
+including automatic reinstall following a firmware update.
 
 
 GPIO conflicts:
 
 GPIO assignments for relays 5 and 6 may cause conflicts with hat board interrupts. 
-This conflict may cause the system to not boot properly or be extremely sluggish.
+This conflict may cause the system to not boot or be extremely sluggish.
 This script allows for two assignments for relays 5 and 6.
 gpio_list is the legacy one: GPIO 23 and 24, respectively
-gpio_listForCanHats provides compatibility with at least the two Waveshare CANbus dual channel hats
-	GPIOs 12 and 20 are used for relays 5 and 6, respectively
+gpio_listForCanHats provides compatibility with
+		Waveshare CANbus dual channel hats (and possibly others)
+	GPIOs 2, 12 and 4 are used for relays 1. 5 and 6, respectively
+	GPIO 3 is used for digital input 4
+	However, i2c is disabled since it uses GPIO 2 and 3 !
 
-An option to select the legady or compatible set is offered during manual setup.
-However, this optoin is considered optional and installation with the legacy set
-is allowed even if the setup script is not run manually first.
+An option to select the legacy or compatible set is offered
+when running setup from the command line.
 
 Custom GPIO list:
 

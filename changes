@@ -1,3 +1,7 @@
+v4.8:
+	switched to using patch for some files
+	fixed typo in ReadMe
+
 v4.7:
 	removed spi1-1cs.dtbo - unused, and confilcts with VeCanSetup
 
