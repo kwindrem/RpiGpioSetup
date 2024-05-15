@@ -39,12 +39,9 @@ configFile="/u-boot/config.txt"
 # no log file for this package
 packageLogFile=""
 
-#### following lines incorporate SetupHelper utilities into this script
-# Refer to the SetupHelper ReadMe file for details.
-    
-source "/data/SetupHelper/CommonResources"
-
-#### end of lines to include SetupHelper
+#### following line incorporates helper resources into this script
+source "/data/SetupHelper/HelperResources/IncludeHelpers"
+#### end of lines to include helper resources
 
 ####### this is duplicate to code in CommonResources -- keep in case SetupHelepr has not been updated
 # prevent installing if not a Raspberry Pi

@@ -1,3 +1,6 @@
+v4.10:
+	remove local copy of HelperResources
+
 v4.9:
 	reverted to v7.17 HelperResources
 
