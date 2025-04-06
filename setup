@@ -33,6 +33,7 @@
 
 # Note, this script DOES require a system reboot.
 
+
 gpioListFile="/etc/venus/gpio_list"
 configFile="/u-boot/config.txt"
 
@@ -43,28 +44,51 @@ packageLogFile=""
 source "/data/SetupHelper/HelperResources/IncludeHelpers"
 #### end of lines to include helper resources
 
-####### this is duplicate to code in CommonResources -- keep in case SetupHelepr has not been updated
-# prevent installing if not a Raspberry Pi
-if [ -f /etc/venus/machine ]; then
-    machine=$(cat /etc/venus/machine)
+# convert old options to new one
+# leave old options in place in case RpiGpioSetup is reverted to a previous verison
+if ! [ -e "$setupOptionsDir/selectedGpioList" ]; then
+	if [ -f "$setupOptionsDir/gpio_list" ]; then
+		selectedGpioList=4
+	elif [ -e "$setupOptionsDir/alternateGpio" ]; then
+		selectedGpioList=2
+	else
+		selectedGpioList=1
+	fi
+	echo $selectedGpioList > "$setupOptionsDir/selectedGpioList"
 fi
-if [ -z $machine ]; then
-    if [ -f "$installedFlag" ]; then
-        logMessage "can't determine Venus device type - uninstalling"
-        scriptAction='UNINSTALL'
-    else
-        logMessage "can't determine Venus device type - exiting"
-		exit $INCOMPATIBLE_PLATFORM
-    fi
-elif [ $machine != "raspberrypi2" ] && [ $machine != "raspberrypi4" ]; then
-    if [ -f "$installedFlag" ]; then
-        logMessage "$packageName not compatible with $machine - uninstalling"
-        scriptAction='UNINSTALL'
-    else
-        logMessage "$packageName not compatible with $machine - exiting"
-		exit $INCOMPATIBLE_PLATFORM
-    fi
-fi
+
+
+# overlay remove and install GPIO overlay
+# Note: strings in these two functions MUST MATCH !!!
+
+overlayBeginText="#### change all digital inputs to pull ups"
+overlayEndText="#### end change all digital inputs to pull ups"
+
+function removeGpioOverlay ()
+{
+    if [ -f "$configFile" ] && [ $(grep -c "$overlayBeginText" "$configFile") > 0 ]; then
+		logMessage "removing GPIO overlay from config.txt"
+		sed -i -e "/$overlayBeginText/,/$overlayEndText/d" "$configFile"
+		filesUpdated=true
+	fi
+}
+
+function installGpioOverlay ()
+{
+    if [ -f "$configFile" ]; then
+		# remove an existing GPIO overlay since it's now different
+		if [ $(grep -c "$1" "$configFile") == 0 ]; then
+			removeGpioOverlay
+		fi
+
+		logMessage "adding overlay $1 to config.txt"
+		echo "$overlayBeginText" >> "$configFile"
+		echo "dtoverlay=$1" >> "$configFile"
+		echo "$overlayEndText" >> "$configFile"
+		filesUpdated=true
+	fi
+}
+
 
 #### running manually and OK to proceed - prompt for input
 if [ $scriptAction == 'NONE' ] ; then
@@ -78,30 +102,72 @@ if [ $scriptAction == 'NONE' ] ; then
     standardActionPrompt 'MORE_PROMPTS'
 
     if [ $scriptAction == 'NONE' ]; then
-		echo
-		echo "Legacy assignment for relays 5 and 6 may conflict with interrupts for some CANbus interface hat boards"
-		echo "Conflicts WILL render the Raspberry PI at least partially unresponsive"
-		echo "To avoid conflicts, an alternate set of GPIO assignments is available"
+		if [ -e "$setupOptionsDir/selectedGpioList" ]; then
+			selectedGpioList=$( cat "$setupOptionsDir/selectedGpioList" )
+		else
+			selectedGpioList=1
+		fi
 
-		useCustomGpioFile=false
-		if [ -f "$setupOptionsDir/gpio_list" ]; then
-			yesNoPrompt "A custom gpio_list file exists - use it (y/n)?: "
-			if $yesResponse ; then
-				echo "CAUTION: manually check custom gpio_list and GPIO overlay for conflicts"
-				useCustomGpioFile=true
-			else
-				rm "$setupOptionsDir/gpio_list"
-			fi
+		if [ $selectedGpioList == 4 ] && ! [ -e "$setupOptionsDir/gpio_list" ]; then
+			echo "WARNING: no custom gpio_list found"
+			echo "create $setupOptionsDir/gpio_list then run this script again"
+			echo "selecting legacy set for now"
+			selectedGpioList=1
 		fi
-		if ! $useCustomGpioFile ; then
-			echo
-			yesNoPrompt "Do you wish to install the alternate set of GPIO assignments (y/n)?: "
-			if $yesResponse ; then
-				touch "$setupOptionsDir/alternateGpio"
-			else
-				rm -f "$setupOptionsDir/alternateGpio"
+
+gpioListText=(  "unknown"\
+				"(1) legacy GPIO list"\
+				"(2) GPIO list for the Waveshare CAN Plus hat"\
+				"(3) GPIO list for most other 2-channel CANbus hats"\
+				"(4) custom GPIO list" )
+		echo
+		echo "GPIO assignments for relays and digital inputs may conflict"
+		echo "  with some CANbus interface hats or other GPIO uses"
+		echo "Conflicts WILL render the Raspberry PI at least partially unresponsive"
+		echo "To help avoid conflicts, select the most appropirate GPIO list:"
+		echo "  ${gpioListText[1]}"
+		echo "  ${gpioListText[2]}"
+		echo "  ${gpioListText[3]}"
+		echo "  ${gpioListText[4]}"
+		echo "  manually create $setupOptionsDir/gpio_list"
+		echo
+		echo "current GPIO list: ${gpioListText[$selectedGpioList]}"
+		while true ; do
+			read -p "select new list by number (cr for no change): " response
+			if [ -z $response ]; then
+				echo "GPIO list unchanged:  ${gpioListText[$selectedGpioList]}"
+				break
 			fi
-		fi
+			case $response in
+				1)
+					selectedGpioList=1
+					;;
+				2)
+					selectedGpioList=2
+					;;
+				3)
+					selectedGpioList=3
+					;;
+				4)
+					if [ -e "$setupOptionsDir/gpio_list" ]; then
+						selectedGpioList=4
+					else
+						echo "WARNING: no custom GPIO list found"
+						echo "create $setupOptionsDir/gpio_list then run this script again"
+						echo "make another selection for now"
+						continue
+					fi
+					;;
+				*)
+					echo "$response is invalid"
+					continue
+					;;
+			esac
+			echo "new GPIO list: ${gpioListText[$selectedGpioList]}"
+			break
+		done
+		
+		echo $selectedGpioList > "$setupOptionsDir/selectedGpioList"
 
 		scriptAction='INSTALL'
 	fi
@@ -109,40 +175,50 @@ fi
 #### installing
 if [ $scriptAction == 'INSTALL' ] ; then
 
-	# use custom GPIO list if present
-	if [ -f "$setupOptionsDir/gpio_list" ]; then
-		logMessage "installing CUSTOM gpio_list"
-		updateActiveFile "$setupOptionsDir/gpio_list" "$gpioListFile"
-	# use a alternate gpio list if option is set
-	elif [ -f "$setupOptionsDir/alternateGpio" ]; then
-		logMessage "installing ALTERNATE gpio_list"
-		updateActiveFile "$pkgFileSets/gpio_listForCanHats" "$gpioListFile"
-	# otherwise use a legacy gpio list
+
+	if [ -e "$setupOptionsDir/selectedGpioList" ]; then
+		selectedGpioList=$( cat "$setupOptionsDir/selectedGpioList" )
 	else
-		logMessage "installing LEGACY gpio_list"
-		updateActiveFile "$gpioListFile"
+		selectedGpioList=1
 	fi
 
-	# install / update GPIO overlay
-	# there are two overlays, make sure the "other" one is removed from config.txt
-	if [ -f "$setupOptionsDir/alternateGpio" ]; then
-		gpioOverlay="VenusGpioOverlayForCanHats"
-		if [ $(grep -c "VenusGpioOverlay" "$configFile") == 0 ]; then
-            sed -i -e '/#### change all digital inputs to pull ups/,/#### end change all digital inputs to pull ups/d' "$configFile"
+	gpioOverlay=""
+	case $selectedGpioList in
+		1)
+			logMessage "installing ${gpioListText[$selectedGpioList]}"
+			updateActiveFile "$gpioListFile"
+			gpioOverlay="VenusGpioOverlayLegacy"
+
+			;;
+		2)
+			logMessage "installing ${gpioListText[$selectedGpioList]}"
+			updateActiveFile "$pkgFileSets/gpio_listForCanPlusHat" "$gpioListFile"
+			gpioOverlay="VenusGpioOverlayForCanPlusHat"
+			;;
+		3)
+			logMessage "installing ${gpioListText[$selectedGpioList]}"
+			updateActiveFile "$pkgFileSets/gpio_listForCanHats" "$gpioListFile"
+			gpioOverlay="VenusGpioOverlayForCanHats"
+			;;
+		4)
+			if [ -e "$setupOptionsDir/gpio_list" ]; then
+				logMessage "installing ${gpioListText[$selectedGpioList]}"
+				updateActiveFile "$setupOptionsDir/gpio_list" "$gpioListFile"
+			else
+				setInstallFailed &EXIT_OPTIONS_NOT_SET "no custom GPIO list found"
+			fi
+			;;
+		*)
+			setInstallFailed &EXIT_OPTIONS_NOT_SET "$selectedGpioList not a valid GPIO list number"
+			;;
+	esac
+
+	if ! $uninstallFailed ; then
+		if ! [ -z $gpioOverlay ]; then
+			installGpioOverlay $gpioOverlay
+		else
+			removeGpioOverlay
 		fi
-	else
-		gpioOverlay="VenusGpioOverlay"
-		if [ $(grep -c "VenusGpioOverlayForCanHats" "$configFile") > 0 ]; then
-            sed -i -e '/#### change all digital inputs to pull ups/,/#### end change all digital inputs to pull ups/d' "$configFile"
-		fi
-	fi
-	
-	if [ $(grep -c "#### change all digital inputs to pull ups" "$configFile") == 0 ]; then
-		logMessage "activating $gpioOverlay"
-		echo "#### change all digital inputs to pull ups" >> "$configFile"
-		echo "dtoverlay=$gpioOverlay" >> "$configFile"
-		echo "#### end change all digital inputs to pull ups" >> "$configFile"
-		filesUpdated=true
 	fi
 fi
 
@@ -152,11 +228,8 @@ if [ $scriptAction == 'UNINSTALL' ] ; then
 
     # remove mods from configFile - do not use restore in case other mods were made manually
     if [ -f "$configFile" ]; then
-        if [ $(grep -c "#### change all digital inputs to pull ups" "$configFile") != 0 ]; then
-            sed -i -e '/#### change all digital inputs to pull ups/,/#### end change all digital inputs to pull ups/d' "$configFile"
-            filesUpdated=true
-        fi
-    fi
+		removeGpioOverlay
+	fi
 fi
 
 if $filesUpdated ; then

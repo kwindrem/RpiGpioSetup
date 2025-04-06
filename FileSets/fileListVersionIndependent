@@ -1,2 +1,3 @@
-/u-boot/overlays/VenusGpioOverlay.dtbo
+/u-boot/overlays/VenusGpioOverlayLegacy.dtbo
 /u-boot/overlays/VenusGpioOverlayForCanHats.dtbo
+/u-boot/overlays/VenusGpioOverlayForCanPlusHat.dtbo

@@ -1,3 +1,6 @@
+v4.11:
+	add support for Waveshare CAN Plus (3rd GPIO assignment set)
+
 v4.10:
 	remove local copy of HelperResources
 
