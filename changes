@@ -1,3 +1,6 @@
+v4.12:
+	add support for /Switchable (v3.70~9)
+
 v4.11:
 	add support for Waveshare CAN Plus (3rd GPIO assignment set)
 

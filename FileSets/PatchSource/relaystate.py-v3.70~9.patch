@@ -1,0 +1,37 @@
+--- /Users/Kevin/GitHub/RpiGpioSetup.copy/FileSets/PatchSource/relaystate.py-v3.70~9.orig	2025-07-08 04:49:41
++++ /Users/Kevin/GitHub/RpiGpioSetup.copy/FileSets/PatchSource/relaystate.py-v3.70~9	2025-07-12 11:52:40
+@@ -23,6 +23,7 @@
+ 				 '/Settings/Relay/Function', # Managed by the gui
+ 				 '/Settings/Relay/1/Function'])]
+ 
++#### add relays 3 - 6 for RpiGpioSetup
+ 	def get_settings(self):
+ 		return [
+ 			('/Relay/0/State', '/Settings/Relay/0/InitialState', 0, 0, 1),
+@@ -34,6 +35,26 @@
+ 			('/SwitchableOutput/1/Settings/Group', '/Settings/Relay/1/Group', "", 0, 0),
+ 			('/SwitchableOutput/1/Settings/CustomName', '/Settings/Relay/1/CustomName', "", 0, 0),
+ 			('/SwitchableOutput/1/Settings/ShowUIControl', '/Settings/Relay/1/ShowUIControl', 1, 0, 1),
++
++			('/Relay/2/State', '/Settings/Relay/2/InitialState', 0, 0, 1),
++			('/SwitchableOutput/2/Settings/Group', '/Settings/Relay/2/Group', "", 0, 0),
++			('/SwitchableOutput/2/Settings/CustomName', '/Settings/Relay/2/CustomName', "", 0, 0),
++			('/SwitchableOutput/2/Settings/ShowUIControl', '/Settings/Relay/2/ShowUIControl', 1, 0, 1),
++
++			('/Relay/3/State', '/Settings/Relay/3/InitialState', 0, 0, 1),
++			('/SwitchableOutput/3/Settings/Group', '/Settings/Relay/3/Group', "", 0, 0),
++			('/SwitchableOutput/3/Settings/CustomName', '/Settings/Relay/3/CustomName', "", 0, 0),
++			('/SwitchableOutput/3/Settings/ShowUIControl', '/Settings/Relay/3/ShowUIControl', 1, 0, 1),
++
++			('/Relay/4/State', '/Settings/Relay/4/InitialState', 0, 0, 1),
++			('/SwitchableOutput/4/Settings/Group', '/Settings/Relay/4/Group', "", 0, 0),
++			('/SwitchableOutput/4/Settings/CustomName', '/Settings/Relay/4/CustomName', "", 0, 0),
++			('/SwitchableOutput/4/Settings/ShowUIControl', '/Settings/Relay/4/ShowUIControl', 1, 0, 1),
++
++			('/Relay/5/State', '/Settings/Relay/5/InitialState', 0, 0, 1),
++			('/SwitchableOutput/5/Settings/Group', '/Settings/Relay/5/Group', "", 0, 0),
++			('/SwitchableOutput/5/Settings/CustomName', '/Settings/Relay/5/CustomName', "", 0, 0),
++			('/SwitchableOutput/5/Settings/ShowUIControl', '/Settings/Relay/5/ShowUIControl', 1, 0, 1),
+ 		]
+ 
+ 	def _relay_function(self, idx):
