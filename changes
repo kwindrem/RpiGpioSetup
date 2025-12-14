@@ -1,3 +1,6 @@
+v4.13:
+	add support for v3.70~61
+
 v4.12:
 	add support for /Switchable (v3.70~9)
 
